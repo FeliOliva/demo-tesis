@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Demo — Sistema de Pesaje Inteligente</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">⚖️</span>
+          <div>
+            <h1>Sistema de Pesaje Inteligente</h1>
+            <p>Demo visual · Reconocimiento de frutas y verduras</p>
+          </div>
+        </div>
+        <button id="clearDemoBtn" class="btn btn-ghost" type="button">
+          🗑 Limpiar demo
+        </button>
+      </div>
+    </header>
+
+    <div class="demo-description">
+      <p>Demo interactiva del sistema de pesaje inteligente. Simula el flujo completo de pesaje, reconocimiento y emisión de ticket sin necesidad de hardware físico.</p>
+    </div>
+
+    <main class="workspace">
+
+      <!-- ── IZQUIERDA: Canasta ── -->
+      <aside class="col col-canasta">
+        <div class="col-header">
+          <span class="step-badge">1</span>
+          <span>🧺</span>
+          <h2>Canasta</h2>
+        </div>
+        <p class="col-hint">Arrastrá un producto hacia la zona de la balanza para iniciar el pesaje.</p>
+        <div id="catalog" class="catalog"></div>
+        <div class="section-tip">
+          <span class="tip-icon">💡</span>
+          <span>Podés arrastrar el mismo producto varias veces con distintos pesos.</span>
+        </div>
+      </aside>
+
+      <!-- ── CENTRO: Estación ── -->
+      <section class="col col-station">
+        <div class="station-header">
+          <span class="step-badge">2</span>
+          <span class="station-title">Estación de pesaje</span>
+        </div>
+
+        <!-- Banner de reconocimiento -->
+        <div id="recognitionBanner" class="recognition-banner idle">
+          <span class="banner-dot"></span>
+          <span id="bannerText">Esperando producto...</span>
+        </div>
+
+        <!-- Cámara virtual -->
+        <div class="device-card">
+          <div class="device-label">📷 Cámara de reconocimiento
+            <span class="device-hint">Identifica automáticamente el producto al colocarlo</span>
+          </div>
+          <div class="camera-body">
+            <div class="camera-viewport">
+              <div class="scan-line"></div>
+              <div id="cameraProduct" class="camera-product-display">—</div>
+            </div>
+            <div class="camera-right">
+              <div class="camera-led"></div>
+              <div class="camera-model">CAM-V1</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balanza virtual -->
+        <div class="device-card scale-card">
+          <div class="device-label">⚖️ Balanza digital
+            <span class="device-hint">Soltá el producto y ajustá el peso con el slider</span>
+          </div>
+          <div id="scaleDropzone" class="scale-body" aria-label="Zona de la balanza">
+            <div class="scale-scene">
+              <div id="scaleProductIcon" class="scale-product-icon">—</div>
+              <div class="scale-platform"></div>
+              <div class="scale-pole"></div>
+              <div class="scale-base">
+                <div id="weightDisplay" class="scale-display">0.000 kg</div>
+              </div>
+            </div>
+            <p class="drop-hint" id="dropHint">Soltá el producto aquí</p>
+          </div>
+          <div class="weight-slider-row">
+            <span>Peso</span>
+            <input id="weightRange" type="range" min="100" max="3000" step="10" value="500" />
+            <span id="weightLabel" class="weight-value">500 g</span>
+          </div>
+        </div>
+
+        <button id="addToCartBtn" class="btn btn-confirm" type="button" disabled>
+          ✅ Confirmar y agregar a la lista
+        </button>
+        <div class="section-tip">
+          <span class="tip-icon">💡</span>
+          <span>El botón se habilita una vez que hay un producto en la balanza.</span>
+        </div>
+      </section>
+
+      <!-- ── DERECHA: Lista + Ticketera ── -->
+      <aside class="col col-list">
+        <div class="col-header">
+          <span class="step-badge">3</span>
+          <span>🛒</span>
+          <h2>Lista de compra</h2>
+        </div>
+
+        <ul id="cartList" class="cart-list"></ul>
+
+        <div class="cart-total-row">
+          <span>Total</span>
+          <strong id="totalLabel">$0.00</strong>
+        </div>
+
+        <button id="finishBtn" class="btn btn-finish" type="button">
+          🖨 Cerrar y emitir ticket
+        </button>
+
+        <div class="section-tip">
+          <span class="tip-icon">💡</span>
+          <span>Al cerrar, la ticketera imprime el comprobante y la pantalla baja hasta el ticket.</span>
+        </div>
+
+        <!-- Ticketera virtual -->
+        <div id="ticketPrinter" class="printer-device">
+          <div class="printer-top">
+            <span class="printer-brand">TICKETERA</span>
+            <div class="printer-led" id="printerLed"></div>
+          </div>
+          <div class="printer-body">
+            <div class="printer-slit-wrap">
+              <div id="printerPaper" class="printer-paper"></div>
+            </div>
+          </div>
+          <div class="printer-base"></div>
+        </div>
+      </aside>
+
+    </main>
+
+    <!-- ── TICKET GENERADO ── -->
+    <section id="generatedTicketSection" class="ticket-section">
+      <div class="ticket-wrapper">
+        <div class="ticket-section-head">
+          <span class="step-badge step-badge-dark">4</span>
+          <span>🧾</span> Ticket generado
+          <span class="ticket-head-hint">El comprobante se genera aquí al cerrar la compra</span>
+          <button id="clearTicketBtn" class="btn btn-ghost btn-clear-ticket" type="button">
+            🗑 Borrar ticket
+          </button>
+        </div>
+        <div id="ticketOutput" class="ticket-body">
+          <p class="ticket-empty">Aún no se emitió ningún ticket.</p>
+        </div>
+      </div>
+    </section>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
